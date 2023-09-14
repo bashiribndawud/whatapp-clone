@@ -12,13 +12,13 @@ function login() {
   const router = useRouter();
   const {dispatch} = useStateProvider();
   const handleLogin = async () => {
-    const provider = new GoogleAuthProvider()
+    const provider = new GoogleAuthProvider();
     const {user: {displayName: name, email, photoURL: profileImage}} = await signInWithPopup(firebaseAuth, provider);
     try {
       if(email){
-        const {data} = await axios.post(CHECK_USER_ROUTE, {email})
+        const {data} = await axios.post(CHECK_USER_ROUTE, { email});
         if(!data.status){
-          dispatch({type: reducerCases.SET_NEW_USER, newUser: true})
+          dispatch({type: reducerCases.SET_NEW_USER, newUser: true});
           dispatch({
             type: reducerCases.SET_USER_INFO, 
             userInfo: {
@@ -27,8 +27,8 @@ function login() {
               profileImage,
               status: ""
             }
-          })
-          router.push("/onboarding")
+          });
+          router.push("/onboarding");
         }
       }
     } catch (error) {
@@ -38,7 +38,7 @@ function login() {
   return (
     <div className="flex justify-center items-center bg-panel-header-background h-screen flex-col overflow-x-hidden">
       <div className="flex items-center justify-center gap-2 text-white">
-        <Image src="/whatsapp.gif" alt="Whatapp" width={300} height={300} />
+        <Image src="/whatsapp.gif" alt="Whatapp" width={200} height={200} />
         <span className="text-7xl">Whatsapp</span>
       </div>
 
@@ -47,7 +47,7 @@ function login() {
         className="mt-5 flex p-5 rounded-lg items-center justify-center gap-7 bg-search-input-container-background"
       >
         <FcGoogle className="text-4xl" />
-        <span className="text-white text-2xl ">Login with Google</span>
+        <span className="text-white text-2xl">Login with Google</span>
       </button>
     </div>
   );

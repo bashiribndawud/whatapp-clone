@@ -25,7 +25,7 @@ function ContextMenu({ options, cordinates, contextMenu, setContextMenu }) {
   }, [])
   return (
     <div
-      className={`bg-dropdown-background fixed py-2 z-[100]  shadow-xl rounded-lg `}
+      className={`bg-dropdown-background fixed py-2 z-[100] shadow-xl rounded-lg`}
       ref={contextMenuRef}
       style={{
         top: cordinates.y,
@@ -35,11 +35,11 @@ function ContextMenu({ options, cordinates, contextMenu, setContextMenu }) {
       <ul>
         {options.map(({ name, callback }) => (
           <li
-            key={name}
+            key={name} 
             onClick={(e) => handleClick(e, callback)}
             className="px-5 py-2 cursor-pointer hover:bg-background-default-hover"
           >
-            <span className="text-white">{name}</span>
+            <span className="text-white">{name}</span>  
           </li>
         ))}
       </ul>

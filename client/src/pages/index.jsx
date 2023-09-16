@@ -1,7 +1,13 @@
 import React from "react";
+import { useStateProvider } from "@/context/StateContext";
+import Main from "@/components/Main";
 
 function index() {
-  return <div>index</div>;
+  const { state: {userInfo, newUser}, dispatch } = useStateProvider();
+  
+  return <div >
+    <Main />
+  </div>;
 }
 
 export default index;

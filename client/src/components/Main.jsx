@@ -51,6 +51,7 @@ function Main() {
       //connection object is stored in the socket.current variable
       socket.current = io(HOST);
       socket.current.emit("add-user", userInfo.id);
+      //store the socket object in the global state
       dispatch({ type: reducerCases.SET_SOCKET, socket });
     }
   }, [userInfo]);
@@ -60,9 +61,10 @@ function Main() {
       socket.current.on("msg-recieve", (data) => {
         dispatch({
           type: reducerCases.ADD_MESSAGE,
-          newMessage: { ...data.message },
+          message: { ...data.message },
         });
       });
+      setSocketEvent(true)
     }
   }, [socket.current]);
 

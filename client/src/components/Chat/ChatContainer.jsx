@@ -12,11 +12,11 @@ function ChatContainer() {
   } = useStateProvider();
 
   return (
-    <div className="h-[80vh] w-full flex-grow overflow-auto custom-scrollbar">
-      <div className="bg-chat-background bg-fixed h-full w-full opacity-5 left-0 top-0 z-10"></div>
-      <div className="mx-10 my-6 relative bottom-0 z-40 left-0">
-        <div className="flex w-full">
-          <div className="flex flex-col justify-end w-full gap-1 overflow-auto">
+    <div className="h-[80vh] w-full flex-grow overflow-auto custom-scrollbar overflow-x-hidden">
+      <div className="bg-chat-background bg-fixed h-full w-full opacity-5 left-0 top-0 z-10 "></div>
+      <div className="mx-10 my-6 relative bottom-0 z-40 left-0 ">
+        <div className="flex w-full ">
+          <div className="flex flex-col justify-end w-full gap-1 overflow-auto overflow-x-hidden">
             {messages?.map((message) => (
               <div
                 key={message?.id}
@@ -49,8 +49,8 @@ function ChatContainer() {
                     </div>
                   </div>
                 )}
-                {message.type === "image" && <ImageMessage message={message} />}
-                {message.type === "audio" && <VoiceMessage message={message} />}
+                {message?.type === "image" && <ImageMessage message={message} />}
+                {message?.type === "audio" && <VoiceMessage message={message} />}
               </div>
             ))}
           </div>

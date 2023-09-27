@@ -10,13 +10,26 @@ import { useRouter } from "next/router";
 import { reducerCases } from "@/context/constants";
 import Chat from "./Chat/Chat";
 import { io } from "socket.io-client";
+import SearchMessages from "./Chat/SearchMessages";
+import VideoCall from "./Call/VideoCall";
+import VoiceCall from "./Call/VoiceCall";
+import IncomingVideoCall from "./common/IncomingVideoCall";
+import IncomingCall from "./common/IncomingCall";
 
 function Main() {
   const [redirectLogin, setredirectLogin] = useState(false);
   const [socketEvent, setSocketEvent] = useState(false);
   const socket = useRef();
   const {
-    state: { userInfo, currentChatUser },
+    state: {
+      userInfo,
+      currentChatUser,
+      messageSearch,
+      voiceCall,
+      videoCall,
+      incomingVoiceCall,
+      incomingVideoCall,
+    },
     dispatch,
   } = useStateProvider();
   const router = useRouter();
@@ -47,8 +60,8 @@ function Main() {
 
   useEffect(() => {
     if (userInfo) {
-      //establish a websocket connection to the server and emit add-user event to the server
-      //connection object is stored in the socket.current variable
+      //initializes a WebSocket connection from the client to the server using Socket.IO. It connects to the server at the specified HOST
+      //stores the socket object.
       socket.current = io(HOST);
       socket.current.emit("add-user", userInfo.id);
       //store the socket object in the global state
@@ -57,14 +70,46 @@ function Main() {
   }, [userInfo]);
 
   useEffect(() => {
+    //check socket is initialized and if socketEvent is false. This condition helps prevent setting up duplicate event listeners.
     if (socket.current && !socketEvent) {
       socket.current.on("msg-recieve", (data) => {
         dispatch({
           type: reducerCases.ADD_MESSAGE,
-          message: { ...data.message },
+          newMessage: { ...data.message },
         });
       });
-      setSocketEvent(true)
+
+      socket.current.on("incoming-voice-call", ({ from, roomId, callType }) => {
+        dispatch({
+          type: reducerCases.SET_INCOMING_VOICE_CALL,
+          incomingVoiceCall: { ...from, roomId, callType },
+        });
+      });
+
+      socket.current.on("incoming-video-call", ({ from, roomId, callType }) => {
+        dispatch({
+          type: reducerCases.SET_INCOMING_VIDEO_CALL,
+          incomingVideoCall: { ...from, roomId, callType },
+        });
+      });
+
+      socket.current.on("voice-call-rejected", () => {
+        dispatch({
+          type: reducerCases.END_CALL
+        })
+      });
+
+      socket.current.on("video-call-rejected", () => {
+        dispatch({
+          type: reducerCases.END_CALL
+        })
+      });
+
+      socket.current.on("online-users", ({ onlineUsers }) => {
+        dispatch({type: reducerCases.SET_ONLINE_USERS, onlineUsers})
+      });
+
+      setSocketEvent(true);
     }
   }, [socket.current]);
 
@@ -82,10 +127,31 @@ function Main() {
   }, [currentChatUser]);
   return (
     <>
-      <div className="grid grid-cols-main h-screen w-screen max-h-screen max-w-full overflow-hidden">
-        <ChatList />
-        {currentChatUser ? <Chat /> : <Empty />}
-      </div>
+      {incomingVideoCall && <IncomingVideoCall />}
+      {incomingVoiceCall && <IncomingCall />}
+      {videoCall && (
+        <div className="h-screen w-screen max-h-full overflow-hidden">
+          <VideoCall />
+        </div>
+      )}
+      {voiceCall && (
+        <div className="h-screen w-screen max-h-full overflow-hidden">
+          <VoiceCall />
+        </div>
+      )}
+      {!voiceCall && !voiceCall && (
+        <div className="grid grid-cols-main h-screen w-screen max-h-screen max-w-full overflow-hidden">
+          <ChatList />
+          {currentChatUser ? (
+            <div className={messageSearch ? "grid grid-cols-2" : ""}>
+              <Chat />
+              {messageSearch && <SearchMessages />}
+            </div>
+          ) : (
+            <Empty />
+          )}
+        </div>
+      )}
     </>
   );
 }

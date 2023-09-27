@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 import Avatar from "../common/Avatar";
 import { FaPause, FaPlay, FaStop } from "react-icons/fa";
+import { calculateTime } from "@/utils/CalculateTime";
+import MessageStatus from "../common/MessageStatus";
 
 function VoiceMessage({ message }) {
   const {
@@ -103,7 +105,15 @@ function VoiceMessage({ message }) {
       <div className="relative">
         <div className="w-60" ref={waveFormRef}>
           <div className="text-bbble-meat pt-1 flex justify-between absolute bottom-[-22px] w-full">
-            <span>{formatTime(isPlaying ? currentPlaybackTime : totalDuration)}</span>
+            <span>
+              {formatTime(isPlaying ? currentPlaybackTime : totalDuration)}
+            </span>
+            <div className="flex gap-1">
+              <span>{calculateTime(message.createdAt)}</span>
+              {
+                message.senderId === userInfo.id && <MessageStatus messageStatus={message.messageStatus} />
+              }
+            </div>
           </div>
         </div>
       </div>

@@ -21,6 +21,7 @@ function MessageBar() {
   const emojiPickerRef = useRef(null);
   const [grabPhoto, setGrabPhoto] = useState(false);
   const [showAudioRecorder, setshowAudioRecorder] = useState(false);
+  
   const photoPickerChange = async (e) => {
     try {
       const file = e.target.files[0];
